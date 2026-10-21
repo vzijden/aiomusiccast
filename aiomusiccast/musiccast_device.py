@@ -382,7 +382,7 @@ class MusicCastDevice:
             self.data.api_version = self._device_info.get("api_version")
 
         self._name_text = await self.device.request_json(System.get_name_text(None))
-        zone_names = {zone.get("id"): zone.get("text") for zone in self._name_text.get("zone_list")}
+        zone_names = {zone.get("id"): zone.get("text") for zone in self._name_text.get("zone_list") or []}
 
         if not self._features:
             self._features = await self.device.request_json(System.get_features())
@@ -425,7 +425,7 @@ class MusicCastDevice:
                     zone_data.range_step[range_step.get("id")] = current
 
                 zone_data.input_list = zone.get("input_list", [])
-                zone_data.func_list = zone.get("func_list")
+                zone_data.func_list = zone.get("func_list") or []
 
                 zone_data.name = zone_names.get(zone_id)
 
@@ -480,10 +480,12 @@ class MusicCastDevice:
                 self.data.alarm_preset_list = clock_features.get("alarm_preset_list", [])
                 self.data.alarm_resume_input_list = clock_features.get("alarm_input_list", [])
 
-        self.data.input_names = {source.get("id"): source.get("text") for source in self._name_text.get("input_list")}
+        self.data.input_names = {
+            source.get("id"): source.get("text") for source in self._name_text.get("input_list") or []
+        }
 
         self.data.sound_program_names = {
-            program.get("id"): program.get("text") for program in self._name_text.get("sound_program_list")
+            program.get("id"): program.get("text") for program in self._name_text.get("sound_program_list") or []
         }
 
         netusb_features = self._features.get("netusb", {})

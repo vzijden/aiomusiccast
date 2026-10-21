@@ -526,6 +526,7 @@ class System:
         "SET_HDMI_OUT_1": "http://{host}/YamahaExtendedControl/v1/system/setHdmiOut1?enable={enable}",
         "SET_HDMI_OUT_2": "http://{host}/YamahaExtendedControl/v1/system/setHdmiOut2?enable={enable}",
         "GET_NAME_TEXT": "http://{host}/YamahaExtendedControl/v1/system/getNameText?id={id}",
+        "GET_NAME_TEXT_ALL": "http://{host}/YamahaExtendedControl/v1/system/getNameText",
         "SET_NAME_TEXT": "http://{host}/YamahaExtendedControl/v1/system/setNameText",
         "SET_SPEAKER_PATTERN": "http://{host}/YamahaExtendedControl/v1/system/setSpeakerPattern?num={num}",
         "SET_PARTYMODE": "http://{host}/YamahaExtendedControl/v1/system/setPartyMode?enable={enable}",
@@ -949,7 +950,7 @@ class System:
     # end-of-method set_hdmi_out_2
 
     @staticmethod
-    def get_name_text(id):
+    def get_name_text(id=None):
         """For retrieving text information of Zone, Input, Sound
         program. If they can be renamed, can retrieve text information
         renamed.
@@ -960,6 +961,10 @@ class System:
             Specifies ID. If no ID is specified, retrieve all information of
             Zone, Input, Sound program. Refer to "All ID List" for details (documentation).
         """
+        if id is None:
+            # Some devices (e.g. NX-70A, netmodule generation 3) do not accept
+            # "?id=None" and return no lists; omit the parameter entirely.
+            return System.URI["GET_NAME_TEXT_ALL"].format(host="{host}")
         return System.URI["GET_NAME_TEXT"].format(host="{host}", id=id)
 
     # end-of-method get_name_text
